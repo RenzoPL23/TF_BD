@@ -27,12 +27,12 @@ CREATE TABLE IngSupervisor(
 	CodIngsup		CHAR(10) NOT NULL PRIMARY KEY,
 	CodEmpleado		CHAR(10) NOT NULL FOREIGN KEY REFERENCES Empleado,
 	NumAcreditacion INT NOT NULL,
-	HoraIngeniero	INT CHECK(HoraIngeniero <= 24)
+	HoraIngeniero	INT 
 )
 CREATE TABLE Operario(
 	CodOperario  CHAR(10) NOT NULL PRIMARY KEY,
 	CodEmpleado  CHAR(10) NOT NULL FOREIGN KEY REFERENCES Empleado,
-	HoraOperario INT CHECK(HoraOperario <= 24)
+	HoraOperario INT
 )
 CREATE TABLE Area(
 	CodArea CHAR(10) NOT NULL PRIMARY KEY,
