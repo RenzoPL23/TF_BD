@@ -170,12 +170,10 @@ CREATE TABLE [Tipo Luz](
     NomTipoL		VARCHAR(20)
 )
 CREATE TABLE [Detalle Prueba de Luces](
-	CodTipoL CHAR(5) NOT NULL,
 	MedidaObtenidaDer DECIMAL,
 	MedidaObtenidaIzq DECIMAL,
 	Alineamiento   BINARY,
 	Resultado      BINARY,
-	PRIMARY KEY (CodTipoL),
 	CodPruebaLuces CHAR(5) FOREIGN KEY REFERENCES [Prueba de Luces],
 	CodTipoLuces   CHAR(5) FOREIGN KEY REFERENCES [Tipo Luz]
 )
