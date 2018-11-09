@@ -5,8 +5,8 @@ CREATE TABLE Propietario(
 	Nombre		   VARCHAR(20),
 	Apellido	   VARCHAR(20),
 	Direccion	   VARCHAR(50),
-	Telefono	   INT CHECK(Telefono = 9),
-	DNI			   INT CHECK(DNI = 8),
+	Telefono	   INT CHECK(Telefono <= 99999999 and Telefono >10000000),
+	DNI			   INT CHECK(DNI <= 99999999 and DNI >10000000),
 )
 
 CREATE TABLE TipoVehiculo(
@@ -19,8 +19,8 @@ CREATE TABLE Empleado(
 	Nombre      VARCHAR (20),
 	Apellido	VARCHAR (20),
 	Dirección	VARCHAR (50),
-	Telefono	INT CHECK( Telefono = 9),
-	DNI			INT CHECK(DNI = 8),
+	Telefono	INT CHECK(Telefono <= 99999999 and Telefono >10000000),
+	DNI			INT CHECK(DNI <= 99999999 and DNI >10000000),
 )
 
 CREATE TABLE IngSupervisor(
