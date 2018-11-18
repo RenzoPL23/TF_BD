@@ -1,4 +1,3 @@
-USE DB_FARENET
 CREATE TABLE Propietario(
 	CodPropietario INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
 	Nombre		   VARCHAR(20),
@@ -75,25 +74,26 @@ CREATE TABLE [Prueba de Luces](
 )
 
 CREATE TABLE Eje(
-	#Eje INT IDENTITY(1,1) NOT NULL,
+	CodEje INT IDENTITY (1,1) NOT NULL,
+	#Eje INT NOT NULL,
 	Peso INT NOT NULL,
-	PRIMARY KEY (#Eje)
+	PRIMARY KEY (CodEje)
 )
 
 CREATE TABLE [Prof de Neumaticos] (
 	CodProfNeumatico	INT NOT NULL IDENTITY (1,1),
-	#Eje				INT FOREIGN KEY REFERENCES Eje,
+	CodEje				INT FOREIGN KEY REFERENCES Eje,
 	MedidaObtenida		DECIMAL, 
 	Resultado			BIT NOT NULL,
-	PRIMARY KEY (CodProfNeumatico, #Eje) 
+	PRIMARY KEY (CodProfNeumatico, CodEje) 
 )
 
 CREATE TABLE [Prueba de Alineamiento](
 	CodAlineamiento INT NOT NULL IDENTITY (1,1),
-	#Eje INT FOREIGN KEY REFERENCES Eje,
+	CodEje INT FOREIGN KEY REFERENCES Eje,
 	Desviacion DECIMAL,
 	Resultado BIT NOT NULL,
-	PRIMARY KEY (CodAlineamiento, #Eje)
+	PRIMARY KEY (CodAlineamiento, CodEje)
 )
 
 CREATE TABLE [Emisiones de Gases](
@@ -125,13 +125,13 @@ CREATE TABLE Seccion(
 CREATE TABLE [Prueba de Freno](
 	CodPruebaFreno INT NOT NULL,
 	CodSeccion	   INT FOREIGN KEY REFERENCES Seccion,
-	#Eje		   INT FOREIGN KEY REFERENCES Eje,
+	CodEje		   INT FOREIGN KEY REFERENCES Eje,
 	FuerzaFrenadoD DECIMAL,
 	FuerzaFrenadoI DECIMAL,
 	Eficiencia	   DECIMAL,
 	Desequilibrio  DECIMAL, 
 	Resultado	   VARCHAR(50)
-	CONSTRAINT PK_PruebaFreno PRIMARY KEY (CodPruebaFreno, CodSeccion, #Eje)
+	CONSTRAINT PK_PruebaFreno PRIMARY KEY (CodPruebaFreno, CodSeccion, CodEje)
 )
 
 CREATE TABLE Posicion(
@@ -182,23 +182,23 @@ CREATE TABLE [PruebaSuspencion Inspeccion](
 CREATE TABLE [PruebaFreno Inspeccion](
 	CodPruebaFreno		INT NOT NULL,
 	CodSeccion			INT NOT NULL,
-	#Eje				INT,
+	CodEje				INT,
 	CodInspeccion		CHAR(5) FOREIGN KEY REFERENCES InformeInspeccion,
-	FOREIGN KEY (CodPruebaFreno,CodSeccion,#Eje) REFERENCES [Prueba de Freno]
+	FOREIGN KEY (CodPruebaFreno,CodSeccion,CodEje) REFERENCES [Prueba de Freno]
 )
 
 CREATE TABLE [Alineamiento Inspeccion](
 	CodAlineamiento INT NOT NULL,
-	#Eje INT NOT NULL,
+	CodEje INT NOT NULL,
 	CodInspeccion CHAR(5) FOREIGN KEY REFERENCES InformeInspeccion,
-	FOREIGN KEY (CodAlineamiento, #Eje) REFERENCES [Prueba de Alineamiento]
+	FOREIGN KEY (CodAlineamiento, CodEje) REFERENCES [Prueba de Alineamiento]
 )
 
 CREATE TABLE [PNeumaticos Inspeccion](
 	CodProfNeumatico INT NOT NULL,
-	#Eje INT NOT NULL,
+	CodEje INT NOT NULL,
 	CodInspeccion CHAR(5) FOREIGN KEY REFERENCES InformeInspeccion,
-	FOREIGN KEY (CodProfNeumatico, #Eje) REFERENCES [Prof de Neumaticos]
+	FOREIGN KEY (CodProfNeumatico, CodEje) REFERENCES [Prof de Neumaticos]
 )
 
 CREATE TABLE [Inspeccion Equipo](
