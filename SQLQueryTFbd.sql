@@ -1,92 +1,103 @@
-use Certificacion
-
+USE DB_FARENET
 CREATE TABLE Propietario(
 	CodPropietario INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
 	Nombre		   VARCHAR(20),
 	Apellido	   VARCHAR(20),
 	Direccion	   VARCHAR(50),
 	Telefono	   INT CHECK(Telefono <= 999999999 and Telefono >100000000),
-	DNI			   INT CHECK(DNI <= 999999999 and DNI >100000000),
+	DNI			   INT CHECK(DNI <= 99999999 and DNI >10000000),
 )
 
-CREATE TABLE TipoVehiculo(
-	CodTipoVehiculo CHAR(5) NOT NULL PRIMARY KEY,
-	NombreTipoVehiculo VARCHAR(20)
+CREATE TABLE Categoria(
+	CodCategoria INT NOT NULL IDENTITY(1, 1) PRIMARY KEY,
+	NombreCategoria VARCHAR(20)
 )
 
 CREATE TABLE Empleado(
-	CodEmpleado CHAR(10) NOT NULL PRIMARY KEY,
-	Nombre      VARCHAR (20),
-	Apellido	VARCHAR (20),
-	Dirección	VARCHAR (50),
-	Telefono	INT CHECK(Telefono <= 99999999 and Telefono >10000000),
-	DNI			INT CHECK(DNI <= 99999999 and DNI >10000000),
-)
-
-CREATE TABLE IngSupervisor(
-	CodIngsup		CHAR(10) NOT NULL PRIMARY KEY,
-	CodEmpleado		CHAR(10) NOT NULL FOREIGN KEY REFERENCES Empleado,
-	NumAcreditacion INT NOT NULL,
-	HoraIngeniero	INT 
-)
-CREATE TABLE Operario(
-	CodOperario  CHAR(10) NOT NULL PRIMARY KEY,
-	CodEmpleado  CHAR(10) NOT NULL FOREIGN KEY REFERENCES Empleado,
-	HoraOperario INT
-)
-CREATE TABLE Area(
-	CodArea CHAR(10) NOT NULL PRIMARY KEY,
-	nombre  VARCHAR(10)
+	CodEmpleado			INT NOT NULL IDENTITY(100, 1) PRIMARY KEY,
+	Nombre				VARCHAR (20),
+	Apellido			VARCHAR (20),
+	Dirección			VARCHAR (50),
+	Telefono			INT CHECK(Telefono <= 999999999 and Telefono >100000000),
+	DNI					INT CHECK(DNI <= 99999999 and DNI > 10000000),
+	Cargo				BIT,
+	[Sueldo/Hora (S/.)]	INT
 )
 
 CREATE TABLE Equipo(
 	CodEquipo    CHAR(5) NOT NULL PRIMARY KEY,
-	CodArea		 CHAR(10) FOREIGN KEY REFERENCES Area,
-	TipoEquipo   VARCHAR (20),
 	NombreEquipo VARCHAR (20)
 )
 
 CREATE TABLE [Equipo Operario](
-	CodOperario CHAR(10) NOT NULL REFERENCES Operario,
+	CodOperario INT NOT NULL REFERENCES Empleado,
 	CodEquipo   CHAR(5) NOT NULL REFERENCES Equipo,
 	PRIMARY KEY (CodOperario,CodEquipo) 
 )
 
 CREATE TABLE Vehiculo(
-	Placa			   CHAR(6) NOT NULL PRIMARY KEY,
-	CodTipoVehiculo    CHAR(5) FOREIGN KEY REFERENCES TipoVehiculo,
-	CodPropietario     INT FOREIGN KEY REFERENCES Propietario,
-	Categoria		   VARCHAR(20),
-	Marca			   VARCHAR(20),
-	Modelo			   VARCHAR(20),
-	AñoFabricacion     INT,
-	Kilometraje		   INT,
-	Combustible		   VARCHAR(20),
-	NumSerie		   VARCHAR(20),
-	NumMotor		   VARCHAR(20),
-	Carroceria		   VARCHAR(20),
-	NumEjes			   INT,
-	Ruedas			   INT,
-	Asientos_Pasajeros INT,
-	Largo_Ancho_Alto   DECIMAL,
-	Color			   VARCHAR(20),
-	PesoNeto		   INT,
-	PesoBruto          INT,
-	CargaUtil          INT
+	Placa			    CHAR(6) NOT NULL PRIMARY KEY,
+	Categoria	        INT FOREIGN KEY REFERENCES Categoria,
+	CodPropietario      INT FOREIGN KEY REFERENCES Propietario,
+	Marca			    VARCHAR(20),
+	Modelo			    VARCHAR(20),
+	[Año de fab.]       INT,
+	Kilometraje		    INT,
+	Combustible		    VARCHAR(20),
+	[VIN/N° de serie]   VARCHAR(20),
+	[N° de motor]	    VARCHAR(20),
+	Carroceria		    VARCHAR(20),
+	[N° ejes]		    INT,
+	[N° ruedas]	        INT,
+	[N° asientos]		INT,
+	[N° pasajeros]		INT,
+	[Largo (m)]			DECIMAL,
+	[Ancho (m)]			DECIMAL,
+	[Alto  (m)]			DECIMAL,
+	[Color(es)]			VARCHAR(20),
+	[Peso Neto (kg.)]	INT,
+	[Peso bruto	(kg.)]	INT,
+	[Carga útil (kg.)]	INT
+)
+
+CREATE TABLE [Tipo Luz](
+    CodTipoLuces CHAR(5) NOT NULL PRIMARY KEY,
+    NomTipoL	 VARCHAR(20)
 )
 
 CREATE TABLE [Prueba de Luces](
 	CodPruebaLuces CHAR(5) NOT NULL PRIMARY KEY,
+	MedidaObtenidaDer DECIMAL,
+	MedidaObtenidaIzq DECIMAL,
+	Alineamiento BIT,
+	Resultado BIT NOT NULL,
+	CodTipoLuces CHAR(5) FOREIGN KEY REFERENCES [Tipo Luz]
 )
-CREATE TABLE [Prueba de Neumaticos](
-	CodPruebaNeumaticos CHAR(5) NOT NULL PRIMARY KEY,
-	CodInspeccion CHAR(5)
+
+CREATE TABLE Eje(
+	#Eje INT IDENTITY(1,1) NOT NULL,
+	Peso INT NOT NULL,
+	PRIMARY KEY (#Eje)
 )
-CREATE TABLE [Prueba de Emision](
-	CodPruebaEmision CHAR(5) NOT NULL PRIMARY KEY,
+
+CREATE TABLE [Prof de Neumaticos] (
+	CodProfNeumatico	INT NOT NULL IDENTITY (1,1),
+	#Eje				INT FOREIGN KEY REFERENCES Eje,
+	MedidaObtenida		DECIMAL, 
+	Resultado			BIT NOT NULL,
+	PRIMARY KEY (CodProfNeumatico, #Eje) 
 )
-CREATE TABLE Gases(
-	CodPruebaEmision CHAR(5) FOREIGN KEY REFERENCES [Prueba de Emision],
+
+CREATE TABLE [Prueba de Alineamiento](
+	CodAlineamiento INT NOT NULL IDENTITY (1,1),
+	#Eje INT FOREIGN KEY REFERENCES Eje,
+	Desviacion DECIMAL,
+	Resultado BIT NOT NULL,
+	PRIMARY KEY (CodAlineamiento, #Eje)
+)
+
+CREATE TABLE [Emisiones de Gases](
+	CodEmisionGases  CHAR(5) NOT NULL PRIMARY KEY,
 	TAceite			 INT,
 	RPM				 INT,
 	Opacidad		 INT,
@@ -96,37 +107,13 @@ CREATE TABLE Gases(
 	CoAcel			 DECIMAL,
 	CoCo2Acel		 DECIMAL,
 	HcAcel			 DECIMAL,
-	ResultadoGases   BINARY
+	Resultado	     BIT
 )
 
-CREATE TABLE Observacion(
-	CodObs				 CHAR(5) NOT NULL,
-	IntepretaciónDefecto VARCHAR(50),
-	Calificacion		 VARCHAR(50),
-	PRIMARY KEY (CodObs)
-)
-
-CREATE TABLE Eje(
-	#Eje INT NOT NULL,
-	Peso INT NOT NULL,
-	PRIMARY KEY (#Eje)
-)
-
-CREATE TABLE ProfNeumaticos (
-	CodProfNeumatico	INT NOT NULL IDENTITY (1,1),
-	NumEje				INT FOREIGN KEY REFERENCES Eje, 
-	CodPruebaNeumaticos CHAR(5) FOREIGN KEY REFERENCES [Prueba de Neumaticos],
-	MedidaObtenida		DECIMAL, 
-	Resultado			VARCHAR(50),
-	PRIMARY KEY (CodProfNeumatico) 
-)
-
-CREATE TABLE [Prueba de Alineamiento](
-	CodPAlineamiento	INT NOT NULL IDENTITY (1,1),
-	NumEje				INT FOREIGN KEY REFERENCES Eje, 
-	CodPruebaNeumaticos CHAR(5) FOREIGN KEY REFERENCES [Prueba de Neumaticos],
-	Desviacion			DECIMAL,
-	Resultado			VARCHAR(50)
+CREATE TABLE [Emisiones Sonoras](
+	CodEmisionSonoras CHAR(5) NOT NULL PRIMARY KEY,
+	[Sonometro (dB)] DECIMAL,
+	Resultado BIT
 )
 
 CREATE TABLE Seccion(
@@ -136,71 +123,95 @@ CREATE TABLE Seccion(
 )
 
 CREATE TABLE [Prueba de Freno](
-	CodPruebaFreno INT IDENTITY (1,1),
-	PRIMARY KEY (CodPruebaFreno)
-)
-
-CREATE TABLE DetallePruebadeFreno(
-	CodPruebaFreno INT FOREIGN KEY REFERENCES [Prueba de Freno],
+	CodPruebaFreno INT NOT NULL,
 	CodSeccion	   INT FOREIGN KEY REFERENCES Seccion,
+	#Eje		   INT FOREIGN KEY REFERENCES Eje,
 	FuerzaFrenadoD DECIMAL,
 	FuerzaFrenadoI DECIMAL,
 	Eficiencia	   DECIMAL,
 	Desequilibrio  DECIMAL, 
 	Resultado	   VARCHAR(50)
+	CONSTRAINT PK_PruebaFreno PRIMARY KEY (CodPruebaFreno, CodSeccion, #Eje)
 )
 
 CREATE TABLE Posicion(
-	CodPosicion	CHAR(5) NOT NULL,
-	NomPosicion	VARCHAR(40) NOT NULL,
-	Izquierda	DECIMAL(4),
-	Derecha		DECIMAL(4),
-	Desviacion	DECIMAL(4),
-	Resultado   DECIMAL(4),
+	CodPosicion	CHAR(2) NOT NULL,
+	NomPosicion	VARCHAR(20) NOT NULL,
 	PRIMARY KEY (CodPosicion)
 )
 
 CREATE TABLE [Prueba de Suspencion](
-	CodSusp			CHAR(5) NOT NULL PRIMARY KEY,
-	ResultadoFinal	BINARY NOT NULL,
-	CodPosicion		CHAR(5) FOREIGN KEY REFERENCES Posicion
+	CodSusp			CHAR(5) NOT NULL,
+	CodPosicion		CHAR(2) NOT NULL FOREIGN KEY REFERENCES Posicion,
+	Izquierda	DECIMAL(4),
+	Derecha		DECIMAL(4),
+	Desviacion	DECIMAL(4),
+	Resultado   DECIMAL(4),
+	PRIMARY KEY (CodSusp, CodPosicion)
 )
-CREATE TABLE [Tipo Luz](
-    CodTipoLuces	CHAR(5) NOT NULL PRIMARY KEY,
-    NomTipoL		VARCHAR(20)
+
+CREATE TABLE Observacion(
+	CodObs				 CHAR(5) NOT NULL,
+	IntepretaciónDefecto VARCHAR(50),
+	Calificacion		 VARCHAR(50),
+	PRIMARY KEY (CodObs)
 )
-CREATE TABLE [Detalle Prueba de Luces](
-	MedidaObtenidaDer DECIMAL,
-	MedidaObtenidaIzq DECIMAL,
-	Alineamiento   BINARY,
-	Resultado      BINARY,
-	CodPruebaLuces CHAR(5) FOREIGN KEY REFERENCES [Prueba de Luces],
-	CodTipoLuces   CHAR(5) FOREIGN KEY REFERENCES [Tipo Luz]
-)
+
 CREATE TABLE InformeInspeccion(
 	CodInspeccion		CHAR(5) NOT NULL PRIMARY KEY,
-	CodPruebaFreno		INT FOREIGN KEY REFERENCES [Prueba de Freno],
-	CodPruebaNeumaticos CHAR(5) FOREIGN KEY REFERENCES [Prueba de Neumaticos],
 	CodPruebaLuces		CHAR(5) FOREIGN KEY REFERENCES [Prueba de Luces],
-	CodSusp				CHAR(5) FOREIGN KEY REFERENCES[Prueba de Suspencion],
-	CodPruebaEmision    CHAR(5) FOREIGN KEY REFERENCES[Prueba de Emision],
-	CodPropietario		CHAR(5),
+	CodEmisionGases		CHAR(5) FOREIGN KEY REFERENCES [Emisiones de Gases],
+	CodEmisionSonoras   CHAR(5) FOREIGN KEY REFERENCES [Emisiones Sonoras],
+	CodPropietario		INT FOREIGN KEY REFERENCES Propietario,
 	Placa				CHAR(6)	FOREIGN KEY REFERENCES Vehiculo,
 	FechaInspeccion		DATE
 )
-CREATE TABLE InformeEquipo(
+
+CREATE TABLE [Observacion Inspeccion](
+	CodObs CHAR(5) FOREIGN KEY REFERENCES Observacion,
+	CodInspeccion CHAR(5) FOREIGN KEY REFERENCES InformeInspeccion,
+)
+
+CREATE TABLE [PruebaSuspencion Inspeccion](
+	CodSusp	CHAR(5) NOT NULL,
+	CodPosicion	CHAR(2) NOT NULL,
+	CodInspeccion CHAR(5) FOREIGN KEY REFERENCES InformeInspeccion,
+	FOREIGN KEY (CodSusp, CodPosicion) REFERENCES [Prueba de Suspencion]
+)
+
+CREATE TABLE [PruebaFreno Inspeccion](
+	CodPruebaFreno		INT NOT NULL,
+	CodSeccion			INT NOT NULL,
+	#Eje				INT,
+	CodInspeccion		CHAR(5) FOREIGN KEY REFERENCES InformeInspeccion,
+	FOREIGN KEY (CodPruebaFreno,CodSeccion,#Eje) REFERENCES [Prueba de Freno]
+)
+
+CREATE TABLE [Alineamiento Inspeccion](
+	CodAlineamiento INT NOT NULL,
+	#Eje INT NOT NULL,
+	CodInspeccion CHAR(5) FOREIGN KEY REFERENCES InformeInspeccion,
+	FOREIGN KEY (CodAlineamiento, #Eje) REFERENCES [Prueba de Alineamiento]
+)
+
+CREATE TABLE [PNeumaticos Inspeccion](
+	CodProfNeumatico INT NOT NULL,
+	#Eje INT NOT NULL,
+	CodInspeccion CHAR(5) FOREIGN KEY REFERENCES InformeInspeccion,
+	FOREIGN KEY (CodProfNeumatico, #Eje) REFERENCES [Prof de Neumaticos]
+)
+
+CREATE TABLE [Inspeccion Equipo](
 	CodEquipo     CHAR(5) FOREIGN KEY REFERENCES Equipo,
 	CodInspeccion CHAR(5) FOREIGN KEY REFERENCES InformeInspeccion
 )
-CREATE TABLE InspeccionObservacion(
-	CodInspeccion  CHAR(5) FOREIGN KEY REFERENCES InformeInspeccion,
-	CodObs CHAR(5) FOREIGN KEY REFERENCES Observacion
-)
+
 CREATE TABLE TipoCertificado(
 	CodTipoCertificado INT NOT NULL ,
 	NombreCertificado  VARCHAR(50),
 	PRIMARY KEY (CodTipoCertificado)
 )
+
 CREATE TABLE Certificado(
 	CodCertificado	    INT NOT NULL,
 	Placa CHAR(6)	    FOREIGN KEY REFERENCES Vehiculo, 
@@ -210,6 +221,6 @@ CREATE TABLE Certificado(
 	VigenciaCertificado VARCHAR(10),
 	FecProxInspección   DATE,
 	CodInspeccion		CHAR(5) FOREIGN KEY REFERENCES InformeInspeccion,
-	CodEmpleado			CHAR(10) FOREIGN KEY REFERENCES Empleado,
+	CodEmpleado			INT FOREIGN KEY REFERENCES Empleado,
 	PRIMARY KEY (CodCertificado)
 )
